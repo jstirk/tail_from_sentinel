@@ -1,0 +1,41 @@
+TailFromSentinel
+
+Parses a file, looking for a sentinel line that satisfies a block, and returns
+all lines from there until the end of the file (including the sentinel itself).
+
+This can be handy when you are looking for information in a log file only after
+a certain condition (eg. a date) has been met.
+
+You can either use it on it's own, or subclass it to build your own custom
+tail-like classes.
+
+Standalone:
+  File.open('/var/log/messages', 'r') do |file|
+    tfs=TailFromSentinel::Base.new(file) { |line| line =~ /Dec 20 11:2\d+/ }
+  end
+  tfs.data # => [ 'Dec 20 11:20:00 ...', 'Dec 20 11:21:00 ...', ... ]
+
+Subclassed:
+  class TailMyFile < TailFromSentinel::Base
+    DATA_ROOT="/path/to/data/"
+
+    def initialize(data_file)
+      file=File.open(File.join(DATA_ROOT, data_file), 'r') do |file|
+        super(file, &select_sentinel_criteria(data_file))
+      end
+    end
+
+    def select_sentinel_criteria(data_file)
+      case data_file
+        when ''production.log'
+          Proc.new { |line| line =~ /pattern/ }
+        when 'development.log'
+          Proc.new { |line| line =~ /another pattern/ }
+        else
+          raise "Unhandled file: #{data_file}"
+      end
+    end
+  end
+
+  t=TailMyFile.new('production.log')
+  t.data # => [ 'Started GET "/pattern ...", "  Processing ... ", ... ]
