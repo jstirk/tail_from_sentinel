@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.authors = ["Jason Stirk"]
   s.email = %q{jstirk@oobleyboo.com}
   s.summary = %q{Reads a file, but only return content once a marker (sentinel) has been found.}
-  s.homepage = %q{http://github.com/jstirk/logstats}
+  s.homepage = %q{http://github.com/jstirk/tail_from_sentinel}
   s.description = %q{Reads a file, but only return content once a marker (sentinel) has been found.}
   s.files = [ "README", "lib/tail_from_sentinel.rb"]
 end
